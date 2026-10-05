@@ -5,15 +5,12 @@ async function loadData() {
     if (!uid) return;
 
     try {
-        // جلب اللون
-        const colorRes = await fetch(`/api/data/${uid}`);
-        const boardData = await colorRes.json();
+        const res = await fetch(`/api/data/${uid}`);
+        const boardData = await res.json();
         const color = boardData.color || '#a855f7';
 
-        // تطبيق اللون على الـ CSS
         document.documentElement.style.setProperty('--neon-color', color);
 
-        // جلب الهدايا
         const gifts = boardData.gifts || [];
         const column = document.getElementById('giftColumn');
 
