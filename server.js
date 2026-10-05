@@ -5,7 +5,7 @@ const fs = require('fs');
 const multer = require('multer');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'control.html'));
 });
 
-// Overlay القديم (زي Fire Widget)
+// Overlay
 app.get('/fire-widget.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'overlay.html'));
 });
@@ -90,7 +90,7 @@ app.put('/api/gifts/:uid/:id', (req, res) => {
     res.json(data[uid].gifts[index]);
 });
 
-// API: إضافة هدية
+// API: إضافة هدية (صورة واحدة)
 app.post('/api/gifts/:uid', upload.single('imageFile'), (req, res) => {
     const uid = req.params.uid;
     const { name } = req.body;
@@ -109,6 +109,30 @@ app.post('/api/gifts/:uid', upload.single('imageFile'), (req, res) => {
     data[uid].gifts.push(newGift);
     writeData(data);
     res.status(201).json(newGift);
+});
+
+// API: رفع صور متعددة مع أسماء (Drag & Drop)
+app.post('/api/gifts/:uid/bulk', upload.array('images', 20), (req, res) => {
+    const uid = req.params.uid;
+    const { names } = req.body;
+    const data = readData();
+    if (!data[uid]) data[uid] = { color: '#a855f7', gifts: [] };
+
+    const namesArray = JSON.parse(names || '[]');
+    const newGifts = [];
+
+    req.files.forEach((file, i) => {
+        const newGift = {
+            id: Date.now() + i,
+            name: namesArray[i] || `هدية ${i + 1}`,
+            image: file.filename
+        };
+        data[uid].gifts.push(newGift);
+        newGifts.push(newGift);
+    });
+
+    writeData(data);
+    res.status(201).json(newGifts);
 });
 
 // API: حذف هدية
