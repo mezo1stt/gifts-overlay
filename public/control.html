@@ -35,13 +35,20 @@
     </div>
 </div>
 
-<div class="form-box">
-    <h3>➕ إضافة هدية جديدة</h3>
-    <input type="text" id="newName" placeholder="اسم الهدية">
-    <input type="file" id="newImage" accept="image/*">
-    <button onclick="addGift()">إضافة</button>
+<div class="drop-zone" id="dropZone">
+    <div class="drop-icon">📁</div>
+    <p>اسحب الصور هنا أو اضغط للاختيار</p>
+    <p class="drop-hint">(تقدر تختار أكتر من صورة مرة واحدة)</p>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
 </div>
 
+<div id="previewBox" class="preview-box"></div>
+
+<button id="saveAllBtn" class="save-all-btn" style="display:none" onclick="saveAllGifts()">
+    💾 حفظ كل الصور
+</button>
+
+<h2 class="section-title">📋 الهدايا الحالية</h2>
 <div id="list" class="list"></div>
 
 <script src="/control.js"></script>
